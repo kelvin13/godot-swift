@@ -7,38 +7,28 @@
 *Godot Swift* is a [Swift Package Manager](https://swift.org/package-manager/) plugin that builds and packages Swift projects as [Godot Native](https://docs.godotengine.org/en/latest/tutorials/scripting/gdnative/what_is_gdnative.html) libraries.
 
 ```swift 
-final 
-class MySwiftClass:Godot.NativeScript
-{
-    var foo:Int = 5
+final class MySwiftClass: Godot.NativeScript {
+    var foo: Int = 5
     
-    init(delegate _:Godot.Unmanaged.Spatial)
-    {
-    }
-    func bar(delegate _:Godot.Unmanaged.Spatial, x:Int) -> Int 
-    {
+    init(delegate _: Godot.Unmanaged.Spatial) {}
+    
+    func bar(delegate _: Godot.Unmanaged.Spatial, x: Int) -> Int {
         self.foo * x
     }
     
-    @Interface 
-    static var interface:Interface 
-    {
-        Interface.properties 
-        {
+    @Interface static var interface: Interface {
+        Interface.properties {
             \.foo <- "foo"
         }
-        Interface.methods 
-        {
+        
+        Interface.methods {
             bar(delegate:x:) <- "bar"
         }
     }
 }
 
-extension Godot.Library 
-{
-    @Interface 
-    static var interface:Interface 
-    {
+extension Godot.Library {
+    @Interface static var interface: Interface {
         MySwiftClass.self <- "MyExportedSwiftClass"
     }
 }

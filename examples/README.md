@@ -106,12 +106,8 @@ We will explore delegate objects in more detail in a later tutorial. For now, we
 ```swift 
 // basic-usage.swift
 
-final 
-class MySwiftClass:Godot.NativeScript
-{
-    init(delegate _:Godot.Unmanaged.Spatial)
-    {
-    }
+final class MySwiftClass: Godot.NativeScript {
+    init(delegate _: Godot.Unmanaged.Spatial) {}
 }
 ```
 
@@ -122,12 +118,8 @@ Next, we define the library interface in `library.swift` by extending the [`Godo
 ```swift 
 // library.swift 
 
-extension Godot.Library 
-{
-    @Interface 
-    static 
-    var interface:Interface 
-    {
+extension Godot.Library {
+    @Interface static var interface: Interface {
         MySwiftClass.self <- "MyExportedSwiftClass"
     }
 }
@@ -140,17 +132,12 @@ Finally, let’s give it a mutable property `foo:Int`, and a method `bar(delegat
 ```swift
 // basic-usage.swift
 
-final 
-class MySwiftClass:Godot.NativeScript
-{
-    init(delegate _:Godot.Unmanaged.Spatial)
-    {
-    }
+final class MySwiftClass: Godot.NativeScript {
+    init(delegate _: Godot.Unmanaged.Spatial) {}
     
-    var foo:Int = 5
+    var foo: Int = 5
 
-    func bar(delegate _:Godot.Unmanaged.Spatial, x:Int) -> Int 
-    {
+    func bar(delegate _: Godot.Unmanaged.Spatial, x: Int) -> Int {
         self.foo * x
     }
 }
@@ -203,18 +190,13 @@ We can declare an interface for `MySwiftClass` as follows:
 ```swift 
 // basic-usage.swift
 
-extension MySwiftClass 
-{
-    @Interface 
-    static 
-    var interface:Interface 
-    {
-        Interface.properties 
-        {
+extension MySwiftClass {
+    @Interface static var interface: Interface {
+        Interface.properties {
             \.foo <- "foo"
         }
-        Interface.methods 
-        {
+        
+        Interface.methods {
             bar(delegate:x:) <- "bar"
         }
     }
@@ -353,23 +335,16 @@ Define a new nativescript class, `SwiftAdvancedMethods`, and add it to the libra
 ```swift 
 // advanced-methods.swift 
 
-final 
-class SwiftAdvancedMethods:Godot.NativeScript
-{
-    init(delegate _:Godot.Unmanaged.Spatial)
-    {
-    }
+final class SwiftAdvancedMethods:Godot.NativeScript {
+    init(delegate _: Godot.Unmanaged.Spatial) {}
+}
 ```
 
 ```swift 
 // library.swift 
 
-extension Godot.Library 
-{
-    @Interface 
-    static 
-    var interface:Interface 
-    {
+extension Godot.Library {
+    @Interface static var interface:Interface {
         MySwiftClass.self           <- "MyExportedSwiftClass"
         SwiftAdvancedMethods.self   <- "SwiftAdvancedMethods"
     }
@@ -383,8 +358,7 @@ Now, let’s explore some of the kinds of nativescript methods we can write usin
 Although there aren’t many good use cases for this, you can define a method that takes a `Godot::null` parameter by specifying its type in Swift as `Void` (sometimes written as the empty tuple `()`).
 
 ```swift 
-    func voidArgument(delegate _:Godot.Unmanaged.Spatial, void _:Void)  
-    {
+    func voidArgument(delegate _: Godot.Unmanaged.Spatial, void _: Void) {
         Godot.print("hello from \(#function)")
     }
 ```
@@ -400,8 +374,7 @@ A `Void` argument does not mean “no argument”; you must call such a function
 Any [`Godot.VariantRepresentable`](https://kelvin13.github.io/godot-swift/Godot/VariantRepresentable) type can be used as a method parameter type. For example, `Optional<Int>` is variant-representable (by the union type of `Godot::null` and `Godot::int`), which means we can define the following method: 
 
 ```swift 
-    func optionalArgument(delegate _:Godot.Unmanaged.Spatial, int:Int?)  
-    {
+    func optionalArgument(delegate _: Godot.Unmanaged.Spatial, int: Int?)  {
         Godot.print("hello from \(#function), received \(int as Any)")
     }
 ```
@@ -418,9 +391,12 @@ Such a method can be called from GDScript with either an integer argument, or `n
 Methods can take any number of parameters, as long as the first parameter is [`Self.Delegate`](https://kelvin13.github.io/godot-swift/Godot/NativeScript/Delegate). The trailing parameters must be [`Godot.VariantRepresentable`](https://kelvin13.github.io/godot-swift/Godot/VariantRepresentable), but there is no requirement that they be of the same type. *Godot Swift* will generate the necessary variadic generic templates for you.
 
 ```swift 
-    func multipleArguments(delegate _:Godot.Unmanaged.Spatial, 
-        bool:Bool, int:Int16, vector:Vector2<Float64>)  
-    {
+    func multipleArguments(
+        delegate _: Godot.Unmanaged.Spatial, 
+        bool: Bool,
+        int: Int16,
+        vector: Vector2<Float64>
+    ) {
         Godot.print("hello from \(#function), received \(bool), \(int), \(vector)")
     }
 ```
@@ -432,8 +408,7 @@ You can find a list of all the built-in [`Godot.VariantRepresentable`](https://k
 *Godot Swift* supports **tuple splatting**. This feature allows you to automatically destructure `Godot::Array` parameters into strongly-typed tuple forms. 
 
 ```swift 
-    func tupleArgument(delegate _:Godot.Unmanaged.Spatial, tuple:(String, (String, String)))  
-    {
+    func tupleArgument(delegate _: Godot.Unmanaged.Spatial, tuple: (String, (String, String))) {
         Godot.print("hello from \(#function), received \(tuple)")
     }
 ```
@@ -454,11 +429,9 @@ To call such a function from GDScript, pass it a `Godot::Array` of the expected 
 You can also specify the Swift type of a `Godot::Array` parameter as [`Godot.List`](https://kelvin13.github.io/godot-swift/Godot/List), to receive variable-length, type-erased Godot lists: 
 
 ```swift 
-    func listArgument(delegate _:Godot.Unmanaged.Spatial, list:Godot.List)  
-    {
+    func listArgument(delegate _: Godot.Unmanaged.Spatial, list: Godot.List) {
         Godot.print("hello from \(#function), received list (\(list.count) elements)")
-        for (i, element):(Int, Godot.Variant?) in list.enumerated()
-        {
+        for (i, element): (Int, Godot.Variant?) in list.enumerated() {
             Godot.print("[\(i)]: \(element as Any)")
         }
     }
@@ -471,8 +444,7 @@ Both forms are called in the exact same way from GDScript.
 *Godot Swift* supports `inout` parameters. 
 
 ```swift 
-    func inoutArgument(delegate _:Godot.Unmanaged.Spatial, int:inout Int)  
-    {
+    func inoutArgument(delegate _: Godot.Unmanaged.Spatial, int: inout Int) {
         Godot.print("hello from \(#function)")
         int += 2
     }
@@ -483,8 +455,7 @@ When called from GDScript, the integer argument passed to this function will be 
 Tuple splatting also works with `inout`. 
 
 ```swift 
-    func inoutTupleArgument(delegate _:Godot.Unmanaged.Spatial, tuple:inout (String, (String, String)))  
-    {
+    func inoutTupleArgument(delegate _:Godot.Unmanaged.Spatial, tuple:inout (String, (String, String))) {
         Godot.print("hello from \(#function), received \(tuple)")
         tuple.1.0 = "new string"
     }
@@ -499,8 +470,7 @@ The list elements are updated individually. Overwriting the entire tuple aggrega
 Any [`Godot.VariantRepresentable`](https://kelvin13.github.io/godot-swift/Godot/VariantRepresentable) type can be used as a method return type. For example, we can return an `Optional<Int>` as follows: 
 
 ```swift 
-    func optionalReturn(delegate _:Godot.Unmanaged.Spatial, int:Int) -> Int?  
-    {
+    func optionalReturn(delegate _: Godot.Unmanaged.Spatial, int: Int) -> Int? {
         int < 0 ? nil : int
     }
 ```
@@ -508,8 +478,7 @@ Any [`Godot.VariantRepresentable`](https://kelvin13.github.io/godot-swift/Godot/
 Tuple splatting also works with return values. The following nativescript method produces a two-element `Godot::Array` when called from GDScript: 
 
 ```swift 
-    func tupleReturn(delegate _:Godot.Unmanaged.Spatial) -> (Float32, Float64?)  
-    {
+    func tupleReturn(delegate _: Godot.Unmanaged.Spatial) -> (Float32, Float64?) {
         return (.pi, nil)
     }
 }
@@ -524,14 +493,9 @@ Before we can test our *Godot Swift* methods in GDScript, we need to add them to
 ```swift 
 // advanced-methods.swift 
 
-extension SwiftAdvancedMethods 
-{
-    @Interface 
-    static 
-    var interface:Interface 
-    {
-        Interface.methods 
-        {
+extension SwiftAdvancedMethods {
+    @Interface static var interface: Interface {
+        Interface.methods {
             voidArgument(delegate:void:)                    <- "void_argument"
             optionalArgument(delegate:int:)                 <- "optional_argument"
             multipleArguments(delegate:bool:int:vector:)    <- "multiple_arguments"
@@ -722,22 +686,18 @@ Define a new nativescript class, `SwiftAdvancedProperties`, in `advanced-propert
 ```swift 
 // advanced-properties.swift 
 
-final 
-class SwiftAdvancedProperties:Godot.NativeScript 
-{
-    var radians:Float64 
-    var degrees:Float64 
-    {
+final class SwiftAdvancedProperties: Godot.NativeScript {
+    var radians: Float64 
+    
+    var degrees: Float64 {
         self.radians * 180.0 / .pi
     }
     
-    private 
-    var array:[Int]
+    private var array:[Int]
     
-    init(delegate _:Godot.Unmanaged.Spatial)
-    {
-        self.radians    = 0.5 * .pi
-        self.array      = [10, 11, 12]
+    init(delegate _: Godot.Unmanaged.Spatial) {
+        self.radians = 0.5 * .pi
+        self.array = [10, 11, 12]
     }
 }
 ```
@@ -745,12 +705,8 @@ class SwiftAdvancedProperties:Godot.NativeScript
 ```swift 
 // library.swift 
 
-extension Godot.Library 
-{
-    @Interface 
-    static 
-    var interface:Interface 
-    {
+extension Godot.Library {
+    @Interface static var interface: Interface {
         MySwiftClass.self               <- "MyExportedSwiftClass"
         SwiftAdvancedMethods.self       <- "SwiftAdvancedMethods"
         SwiftAdvancedProperties.self    <- "SwiftAdvancedProperties"
@@ -763,14 +719,9 @@ We already saw in the [basic usage](#basic-usage) tutorial how to register a set
 ```swift 
 // advanced-properties.swift 
 
-extension SwiftAdvancedProperties
-{
-    @Interface 
-    static 
-    var interface:Interface 
-    {
-        Interface.properties 
-        {
+extension SwiftAdvancedProperties {
+    @Interface static var interface:Interface {
+        Interface.properties {
             \.radians   <- "radians"
 ```
 
@@ -886,17 +837,14 @@ Assuming you completed any of the previous three tutorials, you should already k
 To create a **signal definition**, declare a type `MySignal`, and conform it to the protocol [`Godot.Signal`](https://kelvin13.github.io/godot-swift/Godot/Signal).
 
 ```swift 
-final 
-class SwiftSignals:Godot.NativeScript 
-{
-    enum MySignal:Godot.Signal 
-    {
+final class SwiftSignals:Godot.NativeScript {
+    enum MySignal:Godot.Signal {
 ```
 
 The signal definition type has an `associatedtype` [`Value`](https://kelvin13.github.io/godot-swift/Godot/Signal/Value), which specifies the **signal value** type. In this example, we will set the [`Value`](https://kelvin13.github.io/godot-swift/Godot/Signal/Value) type to `(foo:Int, bar:Float64)`.
 
 ```swift 
-        typealias Value = (foo:Int, bar:Float64)
+        typealias Value = (foo: Int, bar: Float64)
 ```
 
 > **Note:** The signal definition type does not need to actually *store* the signal value; its purpose is simply to specify the name and format of the signal. In general, a signal definition type should simply be an uninhabited `enum`. This lets you abstract signal formats from signal values, for example, to reuse the same signal value type for multiple signals.
@@ -904,10 +852,7 @@ The signal definition type has an `associatedtype` [`Value`](https://kelvin13.gi
 The [`Godot.Signal`](https://kelvin13.github.io/godot-swift/Godot/Signal) protocol requires you to specify a **signal interface**, which specifies the order and names of the fields in the signal.
 
 ```swift 
-        @Interface 
-        static 
-        var interface:Interface 
-        {
+        @Interface static var interface: Interface {
             \.foo <- "foo"
             \.bar <- "bar"
         }
@@ -916,9 +861,7 @@ The [`Godot.Signal`](https://kelvin13.github.io/godot-swift/Godot/Signal) protoc
 Finally, we must specify the signal’s name through the required static [`name`](https://kelvin13.github.io/godot-swift/Godot/Signal/name) property: 
 
 ```swift 
-        static 
-        var name:String 
-        {
+        static var name: String {
             "my_signal"
         }
 ```
@@ -926,12 +869,10 @@ Finally, we must specify the signal’s name through the required static [`name`
 To emit a signal, pass a value for it, and a signal definition type to the [`emit(signal:as:)`](https://kelvin13.github.io/godot-swift/Godot/AnyDelegate/emit(signal:as:)) method on the delegate.
 
 ```swift 
-    init(delegate _:Godot.Unmanaged.Spatial) 
-    {
+    init(delegate _: Godot.Unmanaged.Spatial) {
     }
 
-    func baz(delegate:Godot.Unmanaged.Spatial) 
-    {
+    func baz(delegate: Godot.Unmanaged.Spatial) {
         delegate.emit(signal: (6, 5.55), as: MySignal.self)
     }
 ```
@@ -939,16 +880,11 @@ To emit a signal, pass a value for it, and a signal definition type to the [`emi
 Any delegate can emit any signal, but if we want anything to be able to listen for it, we need to add it to the nativescript interface. Here, we have also added the `baz(delegate:)` trigger method to the interface, for demonstration purposes. 
 
 ```swift 
-    @Interface 
-    static 
-    var interface:Interface 
-    {
-        Interface.signals 
-        {
+    @Interface static var interface:Interface {
+        Interface.signals {
             MySignal.self 
         }
-        Interface.methods 
-        {
+        Interface.methods {
             baz(delegate:) <- "baz"
         }
     }
@@ -1022,27 +958,19 @@ To demonstrate this, let’s define two nativescript classes, `SwiftUnmanaged`, 
 ```swift 
 // life-cycle-management.swift
 
-final 
-class SwiftUnmanaged:Godot.NativeScript
-{
-    init(delegate _:Godot.Unmanaged.Node) 
-    {
+final class SwiftUnmanaged: Godot.NativeScript {
+    init(delegate _: Godot.Unmanaged.Node) {
         Godot.print("initialized instance of '\(Self.self)'")
     }
-    deinit 
-    {
+    deinit {
         Godot.print("deinitialized instance of '\(Self.self)'")
     }
 }
-final 
-class SwiftManaged:Godot.NativeScript
-{
-    init(delegate _:Godot.AnyObject) 
-    {
+final class SwiftManaged:Godot.NativeScript {
+    init(delegate _: Godot.AnyObject) {
         Godot.print("initialized instance of '\(Self.self)'")
     }
-    deinit 
-    {
+    deinit {
         Godot.print("deinitialized instance of '\(Self.self)'")
     }
 }
@@ -1127,24 +1055,17 @@ To start, let’s define a type `InputEvents` which holds two Godot objects — 
 ```swift 
 // custom-types.swift 
 
-struct InputEvents:Godot.VariantRepresentable
-{
-    let events:(mouse:Godot.InputEventMouseButton, key:Godot.InputEventKey)
+struct InputEvents:Godot.VariantRepresentable {
+    let events:(mouse: Godot.InputEventMouseButton, key: Godot.InputEventKey)
 ```
 
 The [`Godot.VariantRepresentable`](https://kelvin13.github.io/godot-swift/Godot/VariantRepresentable) protocol has the following requirements:
 
 ```swift 
-protocol Godot.VariantRepresentable 
-{
-    static 
-    var variantType:Godot.VariantType
-    {
-        get 
-    }
+protocol Godot.VariantRepresentable {
+    static var variantType:Godot.VariantType { get }
     
-    static 
-    func takeUnretained(_:Godot.Unmanaged.Variant) -> Self?
+    static func takeUnretained(_: Godot.Unmanaged.Variant) -> Self?
     func passRetained() -> Godot.Unmanaged.Variant 
 }
 ```
@@ -1186,9 +1107,7 @@ If there is more than one possible GDScript type that can represent the conformi
 We want `InputEvents` to be represented by a two-element [`Godot.List`](https://kelvin13.github.io/godot-swift/Godot/List) (`Godot::Array`) in GDScript, so we set the type hint to the [`list`](https://kelvin13.github.io/godot-swift/Godot/VariantType/list) case.
 
 ```swift 
-    static 
-    var variantType:Godot.VariantType 
-    {
+    static var variantType:Godot.VariantType {
         .list
     }
 ```
@@ -1198,17 +1117,14 @@ The next step is to implement the static [`takeUnretained(_:)`](https://kelvin13
 If you are familiar with the Swift standard library type [`Unmanaged<T>`](https://developer.apple.com/documentation/swift/Unmanaged), the semantics here are exactly the same. That is, [`takeUnretained(_:)`](https://kelvin13.github.io/godot-swift/Godot/VariantRepresentable/takeUnretained(_:)) is expected to load a memory-managed instance of `Self` from the [`Godot.Unmanaged.Variant`](https://kelvin13.github.io/godot-swift/Godot/Unmanaged/Variant) value, performing an unbalanced retain, if applicable. If the original [`Godot.Unmanaged.Variant`](https://kelvin13.github.io/godot-swift/Godot/Unmanaged/Variant) is later deinitialized, the newly-loaded instance of `Self` should still be valid. If it is not possible to load an instance of `Self` from the variant data, this function should return `nil`.
 
 ```swift 
-    static 
-    func takeUnretained(_ value:Godot.Unmanaged.Variant) -> Self?
-    {
+    static func takeUnretained(_ value:Godot.Unmanaged.Variant) -> Self? {
         guard   let list:Godot.List = value.take(unretained: Godot.List.self), 
                     list.count == 2, 
                 let mouse:Godot.InputEventMouseButton   = 
                     list[0] as? Godot.InputEventMouseButton,
                 let key:Godot.InputEventKey             = 
                     list[1] as? Godot.InputEventKey
-        else 
-        {
+        else {
             return nil 
         }
         
@@ -1243,13 +1159,8 @@ The [`passRetained()`](https://kelvin13.github.io/godot-swift/Godot/VariantRepre
 It is also possible to call the [`passRetained()`](https://kelvin13.github.io/godot-swift/Godot/List/passRetained()) instance method on [`Godot.List`](https://kelvin13.github.io/godot-swift/Godot/List) directly, but calling the [`pass(retaining:)`](https://kelvin13.github.io/godot-swift/Godot/Unmanaged/Variant/0-pass(retaining:)/) constructor is the preferred form.
 
 ```swift 
-    func passRetained() -> Godot.Unmanaged.Variant 
-    {
-        .pass(retaining: 
-            [
-                self.events.mouse, 
-                self.events.key,
-            ] as Godot.List)
+    func passRetained() -> Godot.Unmanaged.Variant {
+        .pass(retaining: [self.events.mouse, self.events.key] as Godot.List)
     }
 }
 ```
@@ -1263,14 +1174,10 @@ It is also possible to define custom Swift types that are representable by more 
 We want `UnitRangeElement<T>` to be representable by both `Godot::int` and `Godot::float`, so we set the type hint to `void`, which in this case means “any type”.
 
 ```swift 
-struct UnitRangeElement<T>:Godot.VariantRepresentable 
-    where T:BinaryFloatingPoint
-{
-    let value:T 
+struct UnitRangeElement<T>:Godot.VariantRepresentable where T:BinaryFloatingPoint {
+    let value: T 
     
-    static 
-    var variantType:Godot.VariantType 
-    {
+    static var variantType:Godot.VariantType {
         .void 
     }
 ```
@@ -1278,24 +1185,19 @@ struct UnitRangeElement<T>:Godot.VariantRepresentable
 The `takeUnretained(_:)` implementation accepts the integer values `0` and `1`, and any floating point value in the range `0 ... 1`. We could attempt to load `Int64` and `Float64` values in a series of `if let`/`else if let` bindings, similar to what we did in the `InputEvents` example, but we can also load a [`Godot.Variant`](https://kelvin13.github.io/godot-swift/Godot/VariantRepresentable)`?` existential, and switch over its type cases:
 
 ```swift 
-    static 
-    func takeUnretained(_ value:Godot.Unmanaged.Variant) -> Self?
-    {
-        switch value.take(unretained: Godot.Variant?.self)
-        {
+    static func takeUnretained(_ value: Godot.Unmanaged.Variant) -> Self? {
+        switch value.take(unretained: Godot.Variant?.self) {
         case 0 as Int64: 
             return .init(value: 0)
         case 1 as Int64:
             return .init(value: 1)
         case let value as Float64:
-            guard 0 ... 1 ~= value 
-            else 
-            {
-                fallthrough 
+            guard 0 ... 1 ~= value else {
+                fallthrough
             }
             return .init(value: .init(value))
         default:
-            return nil 
+            return nil
         }
     }
 ```
@@ -1305,10 +1207,8 @@ The `takeUnretained(_:)` implementation accepts the integer values `0` and `1`, 
 The `passRetained()` implementation can produce either a `Godot::int`, if possible, or a `Godot::float` otherwise. 
 
 ```swift 
-    func passRetained() -> Godot.Unmanaged.Variant 
-    {
-        switch self.value 
-        {
+    func passRetained() -> Godot.Unmanaged.Variant {
+        switch self.value {
         case 0:         return .pass(retaining: 0 as Int64)
         case 1:         return .pass(retaining: 1 as Int64)
         case let value: return .pass(retaining: Float64.init(value))
@@ -1319,38 +1219,27 @@ The `passRetained()` implementation can produce either a `Godot::int`, if possib
 We can now define a nativescript `SwiftCustomTypes` to demonstrate the usage of our custom [`Godot.VariantRepresentable`](https://kelvin13.github.io/godot-swift/Godot/VariantRepresentable) types: 
 
 ```swift 
-final 
-class SwiftCustomTypes:Godot.NativeScript 
-{
-    @Interface 
-    static 
-    var interface:Interface 
-    {
-        Interface.methods 
-        {
+final class SwiftCustomTypes: Godot.NativeScript {
+    @Interface static var interface:Interface {
+        Interface.methods {
             push(delegate:inputs:) <- "push_inputs"
         }
-        Interface.properties 
-        {
+        Interface.properties {
             \.x <- "x"
         }
     }
     
-    var x:UnitRangeElement<Float32> 
-    {
-        didSet
-        {
+    var x: UnitRangeElement<Float32> {
+        didSet {
             Godot.print("set `x` to \(self.x.value)")
         }
     }
     
-    init(delegate _:Godot.Unmanaged.Spatial)
-    {
+    init(delegate _: Godot.Unmanaged.Spatial) {
         self.x = .init(value: 0.5)
     }
     
-    func push(delegate _:Godot.Unmanaged.Spatial, inputs:InputEvents)
-    {
+    func push(delegate _: Godot.Unmanaged.Spatial, inputs: InputEvents) {
         Godot.print("\(#function) received inputs \(inputs)")
     }
 }
